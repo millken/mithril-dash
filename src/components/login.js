@@ -30,8 +30,8 @@ const Login = {
                             )), m("div", { class: "row" }, m("div", { class: "large-12 columns" },
                                 m("input[type=password]", { placeholder: "Password", oninput: m.withAttr("value", this.setPassword.bind(this)), value: this.password }),
                             )), m("div.row", m("div.large-12.columns.button-wrapper", m("button.button.radius", "Log In"),
-                                m("a.navigate", { href: "/signup" }, "or Sign Up"))),
-                            m("div.row", m("div.large-12.columns", { id: "forgot-password-link" }, m("a.navigate", { href: "/forgot-password" }, "Forgot Password?"))), )
+                                m("a.navigate", { href: "/signup", oncreate: m.route.link }, "or Sign Up"))),
+                            m("div.row", m("div.large-12.columns", { id: "forgot-password-link" }, m("a.navigate", { href: "/forgot-password", oncreate: m.route.link }, "Forgot Password?"))), )
                     )
                 )))
         ))

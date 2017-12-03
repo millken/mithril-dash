@@ -24,10 +24,11 @@
         "file-loader": "^0.11.1",
         "less": "^2.7.2",
         "less-loader": "^4.0.3",
+        "mock-webpack-plugin": "^2.0.0",
         "open-browser-webpack-plugin": "0.0.5",
         "style-loader": "^0.16.1",
         "url-loader": "^0.5.8",
         "webpack": "^2.3.3",
-        "webpack-dev-server": "^2.4.2"
+        "mock-proxy-middleware": "^1.9.10"
     }
 }
