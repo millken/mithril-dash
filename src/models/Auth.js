@@ -1,5 +1,6 @@
 const m = require('mithril')
 const config = require('../config.js')
+const localstorage = require('../models/Localstorage')
 const Box1 = require("../components/box1.js")
 
 const Auth = {
@@ -25,7 +26,12 @@ const Auth = {
     setError(value) {
         Auth.error = value || ''
     },
-
+    setToken(value) {
+        localstorage.set('token', value)
+    },
+    getToken() {
+        return localstorage.get('token')
+    },
     canSubmit() {
         return Auth.email !== '' && Auth.password !== ''
     },
@@ -52,14 +58,14 @@ const Auth = {
                 if (data.errno > 0) {
                     Auth.error = data.errmsg
                     Box1.show()
-                }else{
+                } else {
                     Auth.error = ''
                     Box1.hide()
+                    Auth.user.email = data.email
+                    Auth.user.id = data.uid
+                    Auth.user.loggedIn = true
+                    m.route.set('/')
                 }
-                Auth.user.name = data.username
-                Auth.user.id = data.id
-                Auth.user.registered = true
-                    //m.route.set('/app')
             })
             .catch((error) => {
                 console.log(error)
@@ -71,14 +77,24 @@ const Auth = {
                 method: 'POST',
                 url: config.apiPrefix + '/auth/token/create/',
                 data: {
-                    username: Auth.username,
+                    email: Auth.email,
                     password: Auth.password
                 },
                 withCredentials: true,
                 headers: { 'X-CSRFToken': Auth.CSRFToken }
             })
             .then((data) => {
-                console.log(data)
+                if (data.errno > 0) {
+                    Auth.error = data.errmsg
+                    Box1.show()
+                } else {
+                    Auth.error = ''
+                    Box1.hide()
+                    Auth.user.email = data.email
+                    Auth.user.id = data.uid
+                    Auth.user.loggedIn = true
+                    m.route.set('/')
+                }
             })
     }
 }

@@ -1,9 +1,9 @@
 function(params) {
     var res = {}
-    if (params.email === "demo@demo.com") {
+    if (params.email !== "demo@demo.com") {
         res = {
             errno: 1001,
-            errmsg: 'Failed to create account. One aleady exists to "' + params.email + '"'
+            errmsg: 'You provided invalid login credentials.'
         }
     } else if (params.password.length < 8) {
         res = {
