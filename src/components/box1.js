@@ -1,21 +1,21 @@
-const m = require('mithril')
+import m from 'mithril'
+import stream from 'mithril/stream/stream'
 
-const Tip1 = {
-    active: false,
-    show() { Modal.active = true },
-    hide() { Modal.active = false },
+
+const Box1 = {
+    visible : stream(false),
+    show() { Box1.visible(true) },
+    hide() { Box1.visible(false) },
     view(vnode) {
-        return m('div', { class: Modal.active ? 'modal is-active' : 'modal' }, [
-            m('.modal-background'),
-            m('.modal-card', [
-                m('header.modal-card-head', [
-                    m('p.modal-card-title', vnode.attrs.title),
-                    m('button.delete', { onclick: Modal.hide })
-                ]),
-                m('section.modal-card-body', vnode.children)
-            ])
+        return !Box1.visible() ? null : m('div.row', [
+            m('.small-12.columns',
+                m(".alert-box.warning.radius",
+                    vnode.attrs.title,
+                    m("a[href=javascript:;].close", {onclick:function(){Box1.hide()}}, "×")
+                )
+            )
         ])
     }
 }
 
-module.exports = Tip1
+module.exports = Box1

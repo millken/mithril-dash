@@ -1,6 +1,6 @@
 const m = require('mithril')
 const config = require('../config.js')
-import Signup from '../components/signup.js'
+const Box1 = require("../components/box1.js")
 
 const Auth = {
     username: '',
@@ -51,6 +51,10 @@ const Auth = {
             .then((data) => {
                 if (data.errno > 0) {
                     Auth.error = data.errmsg
+                    Box1.show()
+                }else{
+                    Auth.error = ''
+                    Box1.hide()
                 }
                 Auth.user.name = data.username
                 Auth.user.id = data.id
