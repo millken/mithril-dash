@@ -61,9 +61,10 @@ const Auth = {
                 } else {
                     Auth.error = ''
                     Box1.hide()
-                    Auth.user.email = data.email
+                    Auth.user.email = data.data.email
                     Auth.user.id = data.uid
                     Auth.user.loggedIn = true
+                    Auth.setToken(data.data.token)
                     m.route.set('/')
                 }
             })
@@ -90,9 +91,10 @@ const Auth = {
                 } else {
                     Auth.error = ''
                     Box1.hide()
-                    Auth.user.email = data.email
-                    Auth.user.id = data.uid
+                    Auth.user.email = data.data.email
+                    Auth.user.id = data.data.uid
                     Auth.user.loggedIn = true
+                    Auth.setToken(data.data.token)
                     m.route.set('/')
                 }
             })

@@ -15,7 +15,8 @@ m.route(root, '/', {
     '/': {
         onmatch() {
             if (!Auth.user.loggedIn) {
-                m.route.set('/login')
+                //m.route.set('/login')
+                return Home
             } else {
                 return Home
             }
