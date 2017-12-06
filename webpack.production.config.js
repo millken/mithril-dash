@@ -5,7 +5,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin'); //抽取CSS文�
 module.exports = {
     entry: {
         index: path.resolve(__dirname, 'src/app.js'),
-        vendors: ['mithril'] //第三方库和框架
+        vendors: ['mithril','jquery'] //第三方库和框架
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

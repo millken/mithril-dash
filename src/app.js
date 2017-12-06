@@ -3,6 +3,7 @@ import m from 'mithril'
 import Home from './components/home.js'
 import Login from './components/login.js'
 import Signup from './components/signup.js'
+import Servers from './components/servers.js'
 
 const Auth = require('./models/Auth')
 
@@ -24,4 +25,5 @@ m.route(root, '/', {
     },
     '/login': Login,
     '/signup': Signup,
+    '/servers': Servers,
 })

@@ -27,15 +27,11 @@ $(function () {
 const togglewrap = stream(false)
 const toggle = (s) => s(!s())
 
-const Home = {
-    oncreate: function () {
-        document.body.classList.add("layout-default");
-        document.body.classList.add("page-home");
-    },
-    view: function () {
+const Layout = {
+    view(vnode) {
         return m('#body'
             , m('.body-inner-wrapper.container',
-                m(".off-canvas-wrap", {className: togglewrap() ? 'move-left': ''},
+                m(".off-canvas-wrap", { className: togglewrap() ? 'move-left' : '' },
                     m(".inner-wrap",
                         m("nav.tab-bar.hide-for-large-up",
                             m("section.middle.tab-bar-section",
@@ -44,7 +40,7 @@ const Home = {
                                 )
                             ),
                             m("section.right-small",
-                                m("a[href=javascript:;].right-off-canvas-toggle.menu-icon", {onclick(){ toggle(togglewrap)}}, m("span"))
+                                m("a[href=javascript:;].right-off-canvas-toggle.menu-icon", { onclick() { toggle(togglewrap) } }, m("span"))
                             )
                         ),
                         m(".main-section",
@@ -58,7 +54,7 @@ const Home = {
                                                 )
                                             ),
                                             m("ul.side-nav.text-right", config.menuList.map((item) =>
-                                                m('li', m("a[href=/" + item.id + "].navigate", { oncreate: m.route.link }, item.name))
+                                                m('li', { className: vnode.attrs.class == item.id ? 'active' : '' }, m("a[href=/" + item.id + "].navigate", { oncreate: m.route.link }, item.name))
                                             ))
                                         )
                                     )
@@ -68,19 +64,7 @@ const Home = {
                                         m("#content.large-12.medium-12.columns",
                                             m(".row",
                                                 m(".large-12.columns",
-                                                    m("article.page.page-content",
-                                                        m("section#page-content",
-                                                            m(".row",
-                                                                m(".large-12.columns.text-center",
-                                                                    m("h2", "Welcome! Connect your first server now."),
-                                                                    m("p.instructions", "Spin up a server at your favorite provider, connect it to ServerPilot, and we'll install everything you need to host PHP apps like WordPress."),
-                                                                    m("p",
-                                                                        m("a[href=/servers/create].navigate.button.radius", { oncreate: m.route.link }, "Connect a Server")
-                                                                    )
-                                                                )
-                                                            )
-                                                        )
-                                                    )
+                                                    m("article.page.page-content", vnode.children)
                                                 )
                                             )
                                         )
@@ -101,4 +85,4 @@ const Home = {
     }
 }
 
-export default Home
+module.exports = Layout
