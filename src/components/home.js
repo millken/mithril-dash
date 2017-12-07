@@ -1,36 +1,24 @@
 import m from 'mithril'
 import $ from "jquery"
+
 import stream from 'mithril/stream/stream'
 const config = require('../config.js')
+const jq = require("../utils/jq.js")
 
 import logosvg from '../images/logo-dark.svg'
-
-const a = {
-    _positionEl: function () {
-        var e = $("#header-inner-wrapper"),
-            n = $(".sticky", e);
-        n.css({
-            left: e.offset().left + "px",
-            width: e.width() + "px"
-        })
-    },
-}
-$(function () {
-    console.log("tester")
-    //$("#header-inner-wrapper>.sticky").css({left:413+"px", width:"170px"})
-    $(window).resize(function () {
-        a._positionEl()
-    });
-    a._positionEl()
-})
 
 const togglewrap = stream(false)
 const toggle = (s) => s(!s())
 
 const Home = {
+    onupdate: function(){
+        console.log("update")
+    },
     oncreate: function () {
-        document.body.classList.add("layout-default");
-        document.body.classList.add("page-home");
+        $("body").attr("class","layout-default page-home")
+        jq._positionEl();
+        //document.body.classList.add("layout-default");
+        //document.body.classList.add("page-home");
     },
     view: function () {
         return m('#body'

@@ -7,7 +7,7 @@ import logosvg from '../images/logo-dark.svg'
 const Login = {
     oninit: Auth.getCSRFToken,
     oncreate: function() {
-        document.body.classList.add("layout-auth");
+        $("body").attr("class","layout-auth");
         document.body.style.overflow = "hidden";
     },
     view: function() {
