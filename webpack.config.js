@@ -1,60 +1,133 @@
-var webpack = require('webpack');
-var path = require('path');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var OpenBrowserPlugin = require('open-browser-webpack-plugin');
-var mockProxyMiddleware = require('mock-proxy-middleware')
-var mockProxyConfig = {
-    apiConfig: {
-        type: 'prefix', // prefix or suffix
-        value: ['/api/', '/common-api/'] // string or array like ['/api/', ...]
-    },
-    ignoreProxyPaths: { // when use proxy mode, this apis use local mode
-        '/api/a/b/c': 1,
-        '/api/get_index_data': 1,
-        '/api/user_info': 1
-    },
-    proxyInfo: { // if use proxy mode，you can use it or set page url proxy args
-        //host: '12.12.12.12',
-        //port: 8080
-    },
-    mockPath: 'mock' // project`s mock dir name， default 'mock'
-}
+const { resolve } = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const pkgInfo = require('./package.json')
+const history = require('connect-history-api-fallback')
+const convert = require('koa-connect')
+const url = require('url')
+const internalIp = require('internal-ip')
+
+const dev = Boolean(process.env.WEBPACK_SERVE)
+const config = require('./config/' + (process.env.npm_config_config || 'default'))
 
 module.exports = {
-    devServer: {
-        historyApiFallback: true,
-        hot: true,
-        inline: true,
-        contentBase: './src',
-        setup: function(app) {
-            app.use(mockProxyMiddleware(mockProxyConfig))
-        }
-    },
-    entry: {
-        index: path.resolve(__dirname, 'src/app.js'),
-        vendors: ['mithril','jquery'] //第三方库和框架
-    },
-    output: {
-        path: '/src/dist/',
-        publicPath: 'dist/', //居然影响了html中的图片路径
-        filename: 'js/[name].buddle.js'
-    },
-    module: {
-        rules: [
-            { test: /\.css$/, use: ExtractTextPlugin.extract({ fallback: 'style-loader', loader: 'css-loader' }) },
-            { test: /\.less$/, use: ExtractTextPlugin.extract("css-loader!less-loader") },
-            { test: /\.js[x]?$/, exclude: /node_modules/, use: 'babel-loader' },
-            { test: /\.(png|jpg|jpeg|gif)$/, use: 'url-loader?limit=1024&name=img/[name].[ext]' },
-            { test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/, use: 'url-loader' }
+  mode: dev ? 'development' : 'production',
+  devtool: dev ? 'cheap-module-eval-source-map' : 'hidden-source-map',
+
+  entry: './src/index.js',
+
+  optimization: {
+    runtimeChunk: true,
+    splitChunks: {
+      chunks: 'all'
+    }
+  },
+
+  output: {
+    path: resolve(__dirname, 'dist'),
+    filename: dev ? '[name].js' : '[chunkhash].js',
+    chunkFilename: '[chunkhash].js',
+    publicPath: config.publicPath
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader']
+      },
+
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: {
+              root: resolve(__dirname, 'src'),
+              attrs: ['img:src', 'link:href']
+            }
+          }
         ]
-    },
-    resolve: {
-        extensions: ['.js', '.json'],
-    },
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({ 'name': 'vendors', 'filename': 'js/vendors.js' }),
-        new ExtractTextPlugin("css/[name].buddle.css"),
-        new webpack.ProvidePlugin({ $: "jquery" }),
-        new OpenBrowserPlugin({ url: 'http://localhost:8080' })
+      },
+
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader']
+      },
+
+      {
+        test: /favicon\.png$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[hash].[ext]'
+            }
+          }
+        ]
+      },
+
+      {
+        test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
+        exclude: /favicon\.png$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000
+            }
+          }
+        ]
+      }
     ]
-};
+  },
+
+  plugins: [
+    new webpack.DefinePlugin({
+      DEBUG: dev,
+      VERSION: JSON.stringify(pkgInfo.version),
+      CONFIG: JSON.stringify(config.runtimeConfig)
+    }),
+
+    new webpack.HashedModuleIdsPlugin(),
+
+    new HtmlWebpackPlugin({
+      template: 'src/index.html',
+      chunksSortMode: 'none'
+    })
+  ],
+
+  resolve: {
+    alias: {
+      '~': resolve(__dirname, 'src')
+    }
+  },
+
+  performance: {
+    hints: dev ? false : 'warning'
+  }
+}
+
+if (dev) {
+  module.exports.serve = {
+    host: '0.0.0.0',
+    hot: {
+      host: {
+        client: internalIp.v4.sync(),
+        server: '0.0.0.0'
+      }
+    },
+    port: config.serve.port,
+    dev: {
+      publicPath: config.publicPath
+    },
+    add: app => {
+      app.use(convert(history({
+        index: url.parse(config.publicPath).pathname,
+        disableDotRule: true,
+        htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
+      })))
+    }
+  }
+}
