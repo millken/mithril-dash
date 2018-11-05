@@ -1,17 +1,17 @@
 module.exports = {
-    runtimeConfig: {
-      experimentalFeatures: {
-        foo: true,
-        bar: true
-      },
+	runtimeConfig: {
+		experimentalFeatures: {
+			foo: true,
+			bar: true
+		},
   
-      thirdPartyApiKey: 'abcdefg123456'
-    },
+		thirdPartyApiKey: 'abcdefg123456'
+	},
   
-    publicPath: '/assets/',
+	publicPath: '/assets/',
   
-    serve: {
-      port: 8080
-    }
-  }
+	serve: {
+		port: 8080
+	}
+};
   

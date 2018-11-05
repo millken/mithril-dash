@@ -1,13 +1,13 @@
 module.exports = {
-    runtimeConfig: {
-      experimentalFeatures: {
-        foo: false,
-        bar: false
-      },
+	runtimeConfig: {
+		experimentalFeatures: {
+			foo: false,
+			bar: false
+		},
   
-      thirdPartyApiKey: 'gfdsa654321'
-    },
+		thirdPartyApiKey: 'gfdsa654321'
+	},
   
-    publicPath: 'http://cdn.example.com/assets/'
-  }
+	publicPath: 'http://cdn.example.com/assets/'
+};
   

@@ -1,133 +1,89 @@
 const { resolve } = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const pkgInfo = require('./package.json')
-const history = require('connect-history-api-fallback')
-const convert = require('koa-connect')
-const url = require('url')
-const internalIp = require('internal-ip')
+const webpack = require('webpack');
 
-const dev = Boolean(process.env.WEBPACK_SERVE)
+// optimization.minimizerを上書きするために必要なプラグイン
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
+const path = require('path');
 const config = require('./config/' + (process.env.npm_config_config || 'default'))
 
-module.exports = {
-  mode: dev ? 'development' : 'production',
-  devtool: dev ? 'cheap-module-eval-source-map' : 'hidden-source-map',
+module.exports = (env, argv) => {
+  // argv.modeにはwebpackを実行したmodeが格納されている
+  // 例えば webpack --mode development と実行すれば
+  // argv.mode には 'development' が格納されている
+  // そのためdevelopmentモードで実行したかどうかを判定できる
+  const IS_DEVELOPMENT = argv.mode === 'development';
 
-  entry: './src/index.js',
-
-  optimization: {
-    runtimeChunk: true,
-    splitChunks: {
-      chunks: 'all'
-    }
-  },
-
-  output: {
-    path: resolve(__dirname, 'dist'),
-    filename: dev ? '[name].js' : '[chunkhash].js',
-    chunkFilename: '[chunkhash].js',
-    publicPath: config.publicPath
-  },
-
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader']
-      },
-
-      {
-        test: /\.html$/,
-        use: [
-          {
-            loader: 'html-loader',
-            options: {
-              root: resolve(__dirname, 'src'),
-              attrs: ['img:src', 'link:href']
-            }
-          }
-        ]
-      },
-
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
-      },
-
-      {
-        test: /favicon\.png$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[hash].[ext]'
-            }
-          }
-        ]
-      },
-
-      {
-        test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
-        exclude: /favicon\.png$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10000
-            }
-          }
-        ]
-      }
-    ]
-  },
-
-  plugins: [
-    new webpack.DefinePlugin({
-      DEBUG: dev,
-      VERSION: JSON.stringify(pkgInfo.version),
-      CONFIG: JSON.stringify(config.runtimeConfig)
-    }),
-
-    new webpack.HashedModuleIdsPlugin(),
-
-    new HtmlWebpackPlugin({
-      template: 'src/index.html',
-      chunksSortMode: 'none'
-    })
-  ],
-
-  resolve: {
-    alias: {
-      '~': resolve(__dirname, 'src')
-    }
-  },
-
-  performance: {
-    hints: dev ? false : 'warning'
-  }
-}
-
-if (dev) {
-  module.exports.serve = {
-    host: '0.0.0.0',
-    hot: {
-      host: {
-        client: internalIp.v4.sync(),
-        server: '0.0.0.0'
-      }
-    },
-    port: config.serve.port,
-    dev: {
+  return {
+    // エントリーポイントの設定
+    entry: './src/index.js',
+    // 出力の設定
+    output: {
+      path: resolve(__dirname, 'dist'),
+      filename: IS_DEVELOPMENT ? '[name].js' : '[chunkhash].js',
+      chunkFilename: '[chunkhash].js',
       publicPath: config.publicPath
     },
-    add: app => {
-      app.use(convert(history({
-        index: url.parse(config.publicPath).pathname,
-        disableDotRule: true,
-        htmlAcceptHeaders: ['text/html', 'application/xhtml+xml']
-      })))
+    // ローダーの設定
+    module: {
+      rules: [
+        {
+          // ローダーの処理対象ファイル
+          test: /\.js$/,
+          // ローダーの処理対象から外すディレクトリ
+          exclude: /node_modules/,
+          use: [
+            {
+              // 利用するローダー
+              loader: 'babel-loader',
+              // ローダーのオプション
+              // 今回はbabel-loaderを利用しているため
+              // babelのオプションを指定しているという認識で問題ない
+              options: {
+                presets: [['env', { modules: false }]]
+              }
+            }
+          ]
+        },
+        {
+          enforce: 'pre',
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: 'eslint-loader'
+        }
+      ]
+    },
+    // プラグインの設定
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: 'jquery'
+      })
+    ],
+    resolve: {
+      alias: {
+        '~': resolve(__dirname, 'src')
+      }
+    },
+    // developmentモードで有効になるdevtool: 'eval'を上書き
+    // developmentモードでビルドした時だけソースマップを出力する
+    devtool: IS_DEVELOPMENT ? 'source-map' : 'none',
+    // productionモードで有効になるoptimization.minimizerを上書きする
+    optimization: {
+      // developmentモードでビルドした場合
+      // minimizer: [] となるため、consoleは残されたファイルが出力される
+      // puroductionモードでビルドした場合
+      // minimizer: [ new UglifyJSPlugin({... となるため、consoleは削除したファイルが出力される
+      minimizer: IS_DEVELOPMENT
+        ? []
+        : [
+            new UglifyJSPlugin({
+              uglifyOptions: {
+                compress: {
+                  drop_console: true
+                }
+              }
+            })
+          ]
     }
-  }
-}
+  };
+};
