@@ -1,11 +1,15 @@
 const { resolve } = require('path')
+const glob = require('glob');
 const webpack = require('webpack');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const PurifyCSSPlugin = require('purifycss-webpack');
 // optimization.minimizerを上書きするために必要なプラグイン
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const path = require('path');
-const config = require('./config/' + (process.env.npm_config_config || 'default'))
+
 
 module.exports = (env, argv) => {
   // argv.modeにはwebpackを実行したmodeが格納されている
@@ -13,16 +17,15 @@ module.exports = (env, argv) => {
   // argv.mode には 'development' が格納されている
   // そのためdevelopmentモードで実行したかどうかを判定できる
   const IS_DEVELOPMENT = argv.mode === 'development';
-
+  const config = require('./config/' + (IS_DEVELOPMENT ? 'dev' : 'default'))
   return {
-    // エントリーポイントの設定
-    entry: './src/index.js',
-    // 出力の設定
+    // 打包入口设定
+    entry: './src/app.js',
+    // 配置打包结果     Object
     output: {
-      path: resolve(__dirname, 'dist'),
-      filename: IS_DEVELOPMENT ? '[name].js' : '[chunkhash].js',
-      chunkFilename: '[chunkhash].js',
-      publicPath: config.publicPath
+      filename: './js/[name].[hash].js',
+      chunkFilename: './js/[name].[hash].js',
+      path: path.resolve(__dirname, 'dist')
     },
     // ローダーの設定
     module: {
@@ -50,29 +53,62 @@ module.exports = (env, argv) => {
           test: /\.js$/,
           exclude: /node_modules/,
           loader: 'eslint-loader'
+        },
+        {// loader sass and css
+          test: /\.(scss|css)$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            "sass-loader"
+          ]
+        },
+        {
+          test:/\.(png|jpg|gif)$/,
+          use:[{
+              loader:'url-loader',
+              options:{ // 这里的options选项参数可以定义多大的图片转换为base64
+                  limit:5000, // 表示小于50kb的图片转为base64,大于50kb的是路径
+                  outputPath:'images' //定义输出的图片文件夹
+              }
+          }]
+        },
+        {
+          test:/\.(eot|svg|ttf|woff|woff2|otf)$/,
+          use:[{
+              loader:'url-loader',
+              options:{ // 这里的options选项参数可以定义多大的图片转换为base64
+                  limit:5000, // 表示小于50kb的图片转为base64,大于50kb的是路径
+                  outputPath:'fonts' //定义输出的图片文件夹
+              }
+          }]
         }
       ]
     },
     // プラグインの設定
     plugins: [
       new webpack.ProvidePlugin({
-        $: 'jquery'
-      })
+        "m": "mithril"
+      }),
+    new CleanWebpackPlugin(['dist']),
+        new HtmlWebpackPlugin({
+            title: 'myProject'
+        }),
+         new MiniCssExtractPlugin({
+          filename: "[name].css",
+          chunkFilename: "[id].css"
+        })
+        ,new PurifyCSSPlugin({
+          // Give paths to parse for rules. These should be absolute!
+          paths: glob.sync(path.join(__dirname, 'dist/js/*.js')),
+        })
     ],
     resolve: {
       alias: {
         '~': resolve(__dirname, 'src')
       }
     },
-    // developmentモードで有効になるdevtool: 'eval'を上書き
-    // developmentモードでビルドした時だけソースマップを出力する
     devtool: IS_DEVELOPMENT ? 'source-map' : 'none',
-    // productionモードで有効になるoptimization.minimizerを上書きする
     optimization: {
-      // developmentモードでビルドした場合
-      // minimizer: [] となるため、consoleは残されたファイルが出力される
-      // puroductionモードでビルドした場合
-      // minimizer: [ new UglifyJSPlugin({... となるため、consoleは削除したファイルが出力される
       minimizer: IS_DEVELOPMENT
         ? []
         : [
@@ -84,6 +120,26 @@ module.exports = (env, argv) => {
               }
             })
           ]
+    },
+
+    devServer: {// location:8088 test
+      port: 8088,
+      contentBase: './dist/',
+      overlay: {
+        error: true
+      },
+      // proxy: {// agent cross-domain interface
+      //   "/api": {
+      //     target: CrossDomainURL,
+      //     changeOrigin: true,
+      //     pathRewrite: {
+      //       "^/api": ""
+      //     }
+      //   }
+      // },
+      hot: true,// hot loading
+      clientLogLevel: "none", // cancel console client log
+      open: true
     }
   };
 };

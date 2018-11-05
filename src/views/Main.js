@@ -1,10 +1,14 @@
 const m = require('mithril');
 
 
-function render() {
-	return m('div', [
-		m('h1', 'Hello World aaa!!'),
-	]);
+const Servers = {
+    oncreate: function () {
+    },
+    view: function () {
+        return m('div', [
+			m('h1', 'Hello World aaabb!!'),
+		]);
+    }
 }
 
-module.exports = render;
+export default Servers
