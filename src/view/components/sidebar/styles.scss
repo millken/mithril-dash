@@ -1,0 +1,9 @@
+$sidebar-background-color : #f5f7fa;
+
+@import '../../../assets/styles/index';
+
+.sidebar-menu li.active {
+    background-color: #e1edfa;
+    color: #2f3033;
+    border-left: 3px solid #008afe;
+}

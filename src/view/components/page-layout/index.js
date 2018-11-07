@@ -1,4 +1,8 @@
+import SidebarComponent from '../sidebar';
+
 import './styles.scss';
+
+import PageContainer from '../page-container';
 
 /**
  * A component that wraps another component with some common
@@ -6,6 +10,6 @@ import './styles.scss';
  */
 export default function() {
     return {
-        view: (vnode) => m('.page-layout', vnode.children),
+        view: (vnode) => m('.page-layout', <SidebarComponent />, m(PageContainer,  vnode.children)),
     };
 }

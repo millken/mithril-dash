@@ -1,11 +1,12 @@
-import PageLayout from './components/page-layout';
+import PageLayout from './view/components/page-layout';
 
 // Individual pages
-import IndexPage from './pages/landing-page';
-import Splash from './components/splash-loader/index';
-import MaintenancePage from './components/maintenance-layout/index';
+import IndexPage from './view/pages/landing-page';
+import FormPage from './view/pages/form-page';
+import Splash from './view/components/splash-loader/index';
+import MaintenancePage from './view/components/maintenance-layout/index';
 
-const $root = document.body.querySelector('#root');
+const root = document.body;
 
 const Routes = {
     '/splash': {
@@ -13,10 +14,15 @@ const Routes = {
             return m(PageLayout, m(Splash));
         },
     },
+    '/form': {
+        render: function() {
+            return m(PageLayout, m(FormPage));
+        },
+    },
     '/index': {
         onmatch() {
             // Show Loader until the promise has been resolved or rejected.
-            m.render($root, m(PageLayout, m(Splash)));
+            m.render(root, m(PageLayout, m(Splash)));
 
             return new Promise((resolve/*, reject*/) => {
                 //Fetch all necessary data here
