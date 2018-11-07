@@ -2,6 +2,9 @@ const merge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const PurifyCSSPlugin = require('purifycss-webpack');
+const path = require('path')
+const glob = require('glob-all')
 
 const common = require('./webpack.common.js');
 
@@ -28,6 +31,17 @@ module.exports = merge(common, {
             filename: (getPath) => getPath('css/[name]-[hash].css'),
             allChunks: true,
         }),
+        new PurifyCSSPlugin({
+            paths: glob.sync([
+                path.join(__dirname, 'src/*.html'),
+                path.join(__dirname, 'src/view/components/*/*.js'),
+                path.join(__dirname, 'src/view/pages/*.js')
+            ]),
+            minimize: true,
+            purifyOptions: {
+                whitelist: []
+            }
+        })
     ],
     optimization: {
         minimizer: [
