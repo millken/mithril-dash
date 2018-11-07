@@ -12,6 +12,11 @@ let data = [
         icon: 'ti-pencil',
         title: '表单',
     },
+    {
+        href: '/table',
+        icon: 'ti-pencil',
+        title: '表格',
+    },
 ];
 
 export default function() {

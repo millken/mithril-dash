@@ -3,8 +3,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const PurifyCSSPlugin = require('purifycss-webpack');
-const path = require('path')
-const glob = require('glob-all')
+const path = require('path');
+const glob = require('glob-all');
 
 const common = require('./webpack.common.js');
 
@@ -35,13 +35,13 @@ module.exports = merge(common, {
             paths: glob.sync([
                 path.join(__dirname, 'src/*.html'),
                 path.join(__dirname, 'src/view/components/*/*.js'),
-                path.join(__dirname, 'src/view/pages/*.js')
+                path.join(__dirname, 'src/view/pages/*.js'),
             ]),
             minimize: true,
             purifyOptions: {
-                whitelist: []
-            }
-        })
+                whitelist: [],
+            },
+        }),
     ],
     optimization: {
         minimizer: [

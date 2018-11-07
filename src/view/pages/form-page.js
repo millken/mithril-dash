@@ -10,7 +10,7 @@ export default function() {
             ]); */
             return (
 
-                <div class="row gap-20 masonry pos-r">
+                <div class="row gap-0 masonry pos-r">
                 <div class="bgc-white p-20 bd col-md">
                 <div class="mT-30">
                 <form>
@@ -62,6 +62,7 @@ export default function() {
                     </div>
                   </div>
                   <div class="form-group row">
+                  <div class="col-sm-2"></div>
                     <div class="col-sm-10">
                       <button type="submit" class="btn btn-primary">Sign in</button>
                     </div>

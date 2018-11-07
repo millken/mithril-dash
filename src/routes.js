@@ -3,6 +3,7 @@ import PageLayout from './view/components/page-layout';
 // Individual pages
 import IndexPage from './view/pages/landing-page';
 import FormPage from './view/pages/form-page';
+import PageTable from './view/pages/table';
 import Splash from './view/components/splash-loader/index';
 import MaintenancePage from './view/components/maintenance-layout/index';
 
@@ -17,6 +18,11 @@ const Routes = {
     '/form': {
         render: function() {
             return m(PageLayout, m(FormPage));
+        },
+    },
+    '/table': {
+        render: function() {
+            return m(PageLayout, m(PageTable));
         },
     },
     '/index': {

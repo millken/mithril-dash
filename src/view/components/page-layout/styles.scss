@@ -1,0 +1,50 @@
+
+.table {
+    color: #76838f
+}
+
+.table th {
+    font-weight: 500
+}
+
+.table tfoot th,.table thead th {
+    font-weight: 500;
+    color: #526069;
+    background: #e9ecef;
+    border-bottom-width: 1px
+}
+
+.form-control,.table-section-arrow {
+    font-weight: 400;
+    text-rendering: auto
+}
+
+.table tbody+tbody {
+    border-top-width: 1px
+}
+
+.table a {
+    text-decoration: underline
+}
+
+.table td>.checkbox-custom:only-child,.table th>.checkbox-custom:only-child {
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center
+}
+
+.table thead:first-child th {
+    border-top: none
+}
+
+.table .table-disabled {
+    color: #e4eaec;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.table .table-disabled a {
+    color: #e4eaec
+}
