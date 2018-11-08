@@ -1,6 +1,12 @@
 import PageContent from '../page-content';
 
+import PageLayout from '../page-layout';
+
 export default {
+    
+    toggle(){
+        PageLayout.sidebarIsOpen=!PageLayout.sidebarIsOpen;
+    },
     view(vnode) {
         return (
             <div class="page-container">
@@ -8,7 +14,7 @@ export default {
                     <div class="header-container">
                         <ul class="nav-left">
                             <li>
-                                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);">
+                                <a id='sidebar-toggle' class="sidebar-toggle" href="javascript:void(0);" onclick={this.toggle}>
                                     <i class="ti-menu"></i>
                                 </a>
                             </li>

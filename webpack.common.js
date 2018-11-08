@@ -52,6 +52,11 @@ module.exports = {
             }],
         }],
     },
+    resolve: {
+        alias: {
+            '~': resolve(__dirname, 'src/'),
+        },
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: './index.html',
