@@ -1,18 +1,12 @@
-import SampleComponent from '../components/sample-component';
-import ContentAlert from '~/components/content-alert'
+import ContentAlert from '~/components/content-alert';
 
 export default function() {
     return {
         alert(event) {
             event.preventDefault();
-            ContentAlert.setInfo( "测试信息" );
+            ContentAlert.setInfo( '测试信息' );
         },     
         view() {
-            /* return m('div', [
-                m('h2', 'Congratulations, you made it!'),
-                m('p', 'You\'ve spun up your very first Mithril app :-)'),
-                m(SampleComponent),
-            ]); */
             return (
 
                 <div class="row gap-0 masonry pos-r">

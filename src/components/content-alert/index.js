@@ -1,31 +1,34 @@
+import stream from 'mithril/stream';
 
-let message = ''
-let msgType = ''
+var wait1000 =  ()=> new Promise((resolve, reject)=> {setTimeout(resolve, 1000)});
+
 
 const Component = {
+    message: stream(''),
+    msgType: stream(''),
     reset:() => {
-        setTimeout(function(){msgType='';m.redraw();}, 5000);
+        setTimeout(function(){Component.msgType='';}, 5000);
     },
     setError:(msg) => {
-        msgType = 'alert-danger';
-        message = msg;
-        Component.reset();
+        Component.msgType = 'alert-danger';
+        Component.message = msg;
+        //Component.reset();
         
     },
     setInfo:(msg) => {
-        msgType = 'alert-info';
-        message = msg;
+        Component.msgType = 'alert-info';
+        Component.message = msg;
         Component.reset();
     },
     setWarning:(msg) => {
-        msgType = 'alert-warning';
-        message = msg;
+        Component.msgType = 'alert-warning';
+        Component.message = msg;
         Component.reset();
     },
     view: () => {
 
-    return msgType  !== ''  &&  m('div', {className: 'alert '+ msgType}, message)
-    }
+        return Component.msgType  !== '' ?  m('div', {className: 'alert '+ Component.msgType}, Component.message) : m('');
+    },
 };
 
 export default Component;

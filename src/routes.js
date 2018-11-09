@@ -7,6 +7,8 @@ import PageTable from './view/pages/table';
 import Splash from './view/components/splash-loader/index';
 import MaintenancePage from './view/components/maintenance-layout/index';
 
+import AccountSignupPage from '~/pages/account-signup'
+
 const root = document.body;
 
 const Routes = {
@@ -23,6 +25,11 @@ const Routes = {
     '/table': {
         render: function() {
             return m(PageLayout, m(PageTable));
+        },
+    },
+    '/account/signup': {
+        render: function() {
+            return m(AccountSignupPage);
         },
     },
     '/index': {

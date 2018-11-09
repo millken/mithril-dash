@@ -1,7 +1,9 @@
 const webpack = require('webpack');
+const path = require('path');
+
 const merge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+const apiMocker = require('webpack-api-mocker');
 const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
@@ -11,13 +13,19 @@ module.exports = merge(common, {
         hot: true,
         contentBase: './dist',
         port: 3000,
-        proxy: {
-            '/api': 'http://localhost:3001',
-        },
         /*overlay: {
             errors: true,
             warnings: true,
         },*/
+        before(app){
+            apiMocker(app, path.resolve('./mocker/index.js'), {
+                // proxy: {
+                //     '/repos/*': 'https://api.github.com/',
+                //     '/:owner/:repo/raw/:ref/*': 'http://127.0.0.1:2018',
+                // },
+                changeHost: true,
+            });
+        },
     },
     module: {
         rules: [{

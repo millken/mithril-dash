@@ -1,10 +1,10 @@
-import http from './http'
-import api from './api'
+import http from './http';
+import api from './api';
 
-let getExampleData = function(params = {}){
-    return http.get(api.getExampleData, params)
-}
+let accountSignup = function(params = {}){
+    return http.post(api.accountSignup, params);
+};
 
-let a = false
+let a = false;
 
-export {getExampleData, a};
+export {accountSignup, a};
